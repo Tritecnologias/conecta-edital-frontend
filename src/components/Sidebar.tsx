@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface SidebarProps {
-  currentView: 'monitoramentos' | 'resultados';
-  setCurrentView: (view: 'monitoramentos' | 'resultados') => void;
+  currentView: 'monitoramentos' | 'resultados' | 'planos' | 'configuracoes';
+  setCurrentView: (view: 'monitoramentos' | 'resultados' | 'planos' | 'configuracoes') => void;
 }
 
 export default function Sidebar({ currentView, setCurrentView }: SidebarProps) {
@@ -18,37 +18,47 @@ export default function Sidebar({ currentView, setCurrentView }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1">
-        <button 
+        <button
           onClick={() => setCurrentView('monitoramentos')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${
-            currentView === 'monitoramentos' 
-              ? 'bg-primary/10 text-primary border-l-[3px] border-primary' 
-              : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
-          }`}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${currentView === 'monitoramentos'
+            ? 'bg-primary/10 text-primary border-l-[3px] border-primary'
+            : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
+            }`}
         >
           <span className={`material-symbols-outlined ${currentView === 'monitoramentos' ? 'filled' : ''}`}>dashboard</span>
           <span className="text-sm font-medium">Monitoramentos</span>
         </button>
 
-        <button 
+        <button
           onClick={() => setCurrentView('resultados')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${
-            currentView === 'resultados' 
-              ? 'bg-primary/10 text-primary border-l-[3px] border-primary' 
-              : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
-          }`}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${currentView === 'resultados'
+            ? 'bg-primary/10 text-primary border-l-[3px] border-primary'
+            : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
+            }`}
         >
           <span className={`material-symbols-outlined ${currentView === 'resultados' ? 'filled' : ''}`}>list_alt</span>
           <span className="text-sm font-medium">Resultados</span>
         </button>
 
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg text-text-muted hover:bg-background-light hover:text-text-main group border-l-[3px] border-transparent transition-colors">
-          <span className="material-symbols-outlined">credit_card</span>
+        <button
+          onClick={() => setCurrentView('planos')}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${currentView === 'planos'
+            ? 'bg-primary/10 text-primary border-l-[3px] border-primary'
+            : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
+            }`}
+        >
+          <span className={`material-symbols-outlined ${currentView === 'planos' ? 'filled' : ''}`}>credit_card</span>
           <span className="text-sm font-medium">Planos</span>
         </button>
 
-        <button className="flex items-center gap-3 px-3 py-2 rounded-lg text-text-muted hover:bg-background-light hover:text-text-main group border-l-[3px] border-transparent transition-colors">
-          <span className="material-symbols-outlined">settings</span>
+        <button
+          onClick={() => setCurrentView('configuracoes')}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${currentView === 'configuracoes'
+              ? 'bg-primary/10 text-primary border-l-[3px] border-primary'
+              : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
+            }`}
+        >
+          <span className={`material-symbols-outlined ${currentView === 'configuracoes' ? 'filled' : ''}`}>settings</span>
           <span className="text-sm font-medium">Configurações</span>
         </button>
       </nav>
@@ -73,9 +83,9 @@ export default function Sidebar({ currentView, setCurrentView }: SidebarProps) {
         {/* User Profile */}
         <div className="flex items-center gap-3 px-1">
           <div className="size-9 rounded-full bg-slate-200 border border-slate-300 overflow-hidden shrink-0">
-            <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGQ6Le6Deyx1TK95pJaJZgXWPnPo6iGnioWdlk7nwfaE5Bnk_I-2Pd9av28C-yvJzuSyuK9q3sbtUlNsKmKlhC3goX5rD9s9hrEHJg0-zcBQPwvf6Xyo1FnzM-esy3X-IyqP14jmvY1crVFjJD4hgL8YS3DTk85zSrnpCzBrm5V-9bmsdZna40Yk1_qboTz56rQDhr7nGnCtxCL3Zs5XEM_a20XXNs5O9LZ7xQ1FsbDl_dtjFlLVltFTLBewpDxWsYRkMm95N66A" 
-              alt="User" 
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGQ6Le6Deyx1TK95pJaJZgXWPnPo6iGnioWdlk7nwfaE5Bnk_I-2Pd9av28C-yvJzuSyuK9q3sbtUlNsKmKlhC3goX5rD9s9hrEHJg0-zcBQPwvf6Xyo1FnzM-esy3X-IyqP14jmvY1crVFjJD4hgL8YS3DTk85zSrnpCzBrm5V-9bmsdZna40Yk1_qboTz56rQDhr7nGnCtxCL3Zs5XEM_a20XXNs5O9LZ7xQ1FsbDl_dtjFlLVltFTLBewpDxWsYRkMm95N66A"
+              alt="User"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />

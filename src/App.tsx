@@ -2,11 +2,13 @@ import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Monitoramentos from './components/Monitoramentos';
 import Resultados from './components/Resultados';
+import Planos from './components/Planos';
+import Configuracoes from './components/Configuracoes';
 import NovoMonitoramentoModal from './components/NovoMonitoramentoModal';
 import ActivationModal from './components/ActivationModal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'monitoramentos' | 'resultados'>('monitoramentos');
+  const [currentView, setCurrentView] = useState<'monitoramentos' | 'resultados' | 'planos' | 'configuracoes'>('monitoramentos');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isActivationOpen, setIsActivationOpen] = useState(false);
 
@@ -23,7 +25,7 @@ export default function App() {
   return (
     <div className="bg-background-light text-text-main h-screen w-full overflow-hidden flex selection:bg-primary/20 selection:text-primary font-display">
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
-      
+
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         {currentView === 'monitoramentos' && (
           <Monitoramentos onNew={() => setIsNewModalOpen(true)} />
@@ -31,17 +33,23 @@ export default function App() {
         {currentView === 'resultados' && (
           <Resultados />
         )}
+        {currentView === 'planos' && (
+          <Planos />
+        )}
+        {currentView === 'configuracoes' && (
+          <Configuracoes />
+        )}
       </main>
 
       {isNewModalOpen && (
-        <NovoMonitoramentoModal 
-          onClose={() => setIsNewModalOpen(false)} 
-          onStart={handleStartMonitoramento} 
+        <NovoMonitoramentoModal
+          onClose={() => setIsNewModalOpen(false)}
+          onStart={handleStartMonitoramento}
         />
       )}
 
       {isActivationOpen && (
-        <ActivationModal 
+        <ActivationModal
           onClose={() => {
             setIsActivationOpen(false);
             setCurrentView('resultados');
