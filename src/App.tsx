@@ -4,11 +4,12 @@ import Monitoramentos from './components/Monitoramentos';
 import Resultados from './components/Resultados';
 import Planos from './components/Planos';
 import Configuracoes from './components/Configuracoes';
+import Admin from './components/Admin';
 import NovoMonitoramentoModal from './components/NovoMonitoramentoModal';
 import ActivationModal from './components/ActivationModal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'monitoramentos' | 'resultados' | 'planos' | 'configuracoes'>('monitoramentos');
+  const [currentView, setCurrentView] = useState<'monitoramentos' | 'resultados' | 'planos' | 'configuracoes' | 'admin'>('monitoramentos');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isActivationOpen, setIsActivationOpen] = useState(false);
 
@@ -38,6 +39,9 @@ export default function App() {
         )}
         {currentView === 'configuracoes' && (
           <Configuracoes />
+        )}
+        {currentView === 'admin' && (
+          <Admin />
         )}
       </main>
 

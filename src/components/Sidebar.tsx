@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface SidebarProps {
-  currentView: 'monitoramentos' | 'resultados' | 'planos' | 'configuracoes';
-  setCurrentView: (view: 'monitoramentos' | 'resultados' | 'planos' | 'configuracoes') => void;
+  currentView: 'monitoramentos' | 'resultados' | 'planos' | 'configuracoes' | 'admin';
+  setCurrentView: (view: 'monitoramentos' | 'resultados' | 'planos' | 'configuracoes' | 'admin') => void;
 }
 
 export default function Sidebar({ currentView, setCurrentView }: SidebarProps) {
@@ -60,6 +60,19 @@ export default function Sidebar({ currentView, setCurrentView }: SidebarProps) {
         >
           <span className={`material-symbols-outlined ${currentView === 'configuracoes' ? 'filled' : ''}`}>settings</span>
           <span className="text-sm font-medium">Configurações</span>
+        </button>
+
+        <div className="my-2 border-t border-border/50" />
+
+        <button
+          onClick={() => setCurrentView('admin')}
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-colors ${currentView === 'admin'
+              ? 'bg-primary/10 text-primary border-l-[3px] border-primary'
+              : 'text-text-muted hover:bg-background-light hover:text-text-main border-l-[3px] border-transparent'
+            }`}
+        >
+          <span className={`material-symbols-outlined ${currentView === 'admin' ? 'filled' : ''}`}>terminal</span>
+          <span className="text-sm font-medium">Admin API</span>
         </button>
       </nav>
 
