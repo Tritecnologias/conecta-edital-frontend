@@ -285,10 +285,10 @@ export default function Admin() {
                   )}
                 </div>
               </div>
-              <pre className="p-5 text-xs font-mono text-text-main overflow-x-auto leading-relaxed bg-slate-950 text-emerald-300 max-h-96">
+              <pre className="p-5 text-xs font-mono overflow-x-auto leading-relaxed bg-slate-950 text-slate-100 max-h-96">
                 {state.error
                   ? <span className="text-red-400">{state.error}</span>
-                  : state.response
+                  : <span className="text-slate-100">{state.response}</span>
                 }
               </pre>
             </div>
