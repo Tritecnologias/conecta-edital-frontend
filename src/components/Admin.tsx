@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const API_BASE = `http://${window.location.hostname}:8000`;
 
@@ -99,6 +99,7 @@ export default function Admin() {
   const [forcar, setForcar] = useState(false);
   const [routeStates, setRouteStates] = useState<Record<string, RouteState>>({});
   const [apiBase, setApiBase] = useState(API_BASE);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const route = ROUTES.find(r => r.id === selected)!;
   const state = routeStates[selected] ?? { loading: false, response: null, status: null, elapsed: null, error: null };
@@ -110,6 +111,31 @@ export default function Admin() {
 
   const setState = (patch: Partial<RouteState>) => {
     setRouteStates(prev => ({ ...prev, [selected]: { ...prev[selected], ...patch } }));
+  };
+
+  // Para polling quando trocar de rota
+  useEffect(() => {
+    return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
+  }, [selected]);
+
+  const startPolling = (url: string) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    pollingRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const text = JSON.stringify(data, null, 2);
+        const finished = data.status?.includes('FINALIZADO') || data.status?.includes('ERRO');
+        setRouteStates(prev => ({
+          ...prev,
+          [selected]: { ...prev[selected], response: text, status: res.status, loading: !finished }
+        }));
+        if (finished && pollingRef.current) {
+          clearInterval(pollingRef.current);
+          pollingRef.current = null;
+        }
+      } catch { }
+    }, 3000);
   };
 
   const handleRun = async () => {
@@ -140,6 +166,17 @@ export default function Admin() {
       let text = '';
       try { text = JSON.stringify(await res.json(), null, 2); } catch { text = await res.text(); }
       setState({ loading: false, response: text, status: res.status, elapsed, error: null });
+
+      // Auto-polling se status for RODANDO
+      if (route.id === 'status') {
+        try {
+          const data = JSON.parse(text);
+          if (data.status?.includes('RODANDO') || data.status?.includes('INICIANDO')) {
+            setState({ loading: true });
+            startPolling(url);
+          }
+        } catch { }
+      }
     } catch (e: unknown) {
       const elapsed = Math.round(performance.now() - t0);
       setState({ loading: false, response: null, status: null, elapsed, error: String(e) });
