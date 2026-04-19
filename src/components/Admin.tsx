@@ -140,6 +140,14 @@ export default function Admin() {
         const data = await res.json();
         setLogs(data.logs || []);
         if (data.status === 'CONCLUIDO' || data.status === 'ERRO') {
+          // Busca logs uma última vez após pequeno delay para pegar os últimos
+          setTimeout(async () => {
+            try {
+              const finalRes = await fetch(`${apiBase}/5-logs/${protocolo}`);
+              const finalData = await finalRes.json();
+              setLogs(finalData.logs || []);
+            } catch { }
+          }, 1000);
           if (logPollingRef.current) clearInterval(logPollingRef.current);
           logPollingRef.current = null;
         }
