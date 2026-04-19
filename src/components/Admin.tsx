@@ -100,6 +100,10 @@ export default function Admin() {
   const [routeStates, setRouteStates] = useState<Record<string, RouteState>>({});
   const [apiBase, setApiBase] = useState(API_BASE);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const logPollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [logs, setLogs] = useState<{ts: string; msg: string}[]>([]);
+  const [activeProtocolo, setActiveProtocolo] = useState<string | null>(null);
+  const logsEndRef = useRef<HTMLDivElement>(null);
 
   const route = ROUTES.find(r => r.id === selected)!;
   const state = routeStates[selected] ?? { loading: false, response: null, status: null, elapsed: null, error: null };
@@ -115,8 +119,33 @@ export default function Admin() {
 
   // Para polling quando trocar de rota
   useEffect(() => {
-    return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      if (logPollingRef.current) clearInterval(logPollingRef.current);
+    };
   }, [selected]);
+
+  // Auto-scroll dos logs
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs]);
+
+  const startLogPolling = (protocolo: string) => {
+    if (logPollingRef.current) clearInterval(logPollingRef.current);
+    setActiveProtocolo(protocolo);
+    setLogs([]);
+    logPollingRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`${apiBase}/5-logs/${protocolo}`);
+        const data = await res.json();
+        setLogs(data.logs || []);
+        if (data.status === 'CONCLUIDO' || data.status === 'ERRO') {
+          if (logPollingRef.current) clearInterval(logPollingRef.current);
+          logPollingRef.current = null;
+        }
+      } catch { }
+    }, 2000);
+  };
 
   const startPolling = (url: string) => {
     if (pollingRef.current) clearInterval(pollingRef.current);
@@ -166,6 +195,16 @@ export default function Admin() {
       let text = '';
       try { text = JSON.stringify(await res.json(), null, 2); } catch { text = await res.text(); }
       setState({ loading: false, response: text, status: res.status, elapsed, error: null });
+
+      // Inicia log polling quando iniciar busca
+      if (route.id === 'iniciar') {
+        try {
+          const data = JSON.parse(text);
+          if (data.PROTOCOLO) {
+            startLogPolling(data.PROTOCOLO);
+          }
+        } catch { }
+      }
 
       // Auto-polling se status for RODANDO
       if (route.id === 'status') {
@@ -328,6 +367,33 @@ export default function Admin() {
                   : <span className="text-slate-100">{state.response}</span>
                 }
               </pre>
+            </div>
+          )}
+
+          {/* Live Logs */}
+          {logs.length > 0 && (
+            <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-soft">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-surface-highlight">
+                <div className="flex items-center gap-2">
+                  {logPollingRef.current && (
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                  )}
+                  <span className="text-sm font-semibold text-text-main">Logs em tempo real</span>
+                </div>
+                <span className="text-xs text-text-muted font-mono">{logs.length} evento(s)</span>
+              </div>
+              <div className="bg-slate-950 p-4 max-h-64 overflow-y-auto font-mono text-xs leading-relaxed">
+                {logs.map((log, i) => (
+                  <div key={i} className="text-slate-300 py-0.5">
+                    <span className="text-slate-500 mr-2">{new Date(parseFloat(log.ts) * 1000).toLocaleTimeString('pt-BR')}</span>
+                    {log.msg}
+                  </div>
+                ))}
+                <div ref={logsEndRef} />
+              </div>
             </div>
           )}
         </div>
