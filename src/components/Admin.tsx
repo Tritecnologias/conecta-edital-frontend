@@ -64,6 +64,18 @@ const ROUTES: RouteConfig[] = [
       { key: 'nome_arquivo', label: 'Nome do arquivo', placeholder: 'Ex: Campinas_2026-03-29_1.pdf' },
     ],
   },
+  {
+    id: 'diagnostico',
+    method: 'POST',
+    path: '/6-diagnosticar',
+    label: 'Diagnosticar URL',
+    description: 'Analisa uma URL e mostra tudo que o robô vê: links, PDFs, iframes, botões. Não processa nada.',
+    icon: 'bug_report',
+    color: 'violet',
+    fields: [
+      { key: 'url_alvo', label: 'URL para diagnosticar', placeholder: 'https://www.cidade.mg.gov.br/diario' },
+    ],
+  },
 ];
 
 const METHOD_STYLE: Record<string, string> = {
@@ -204,8 +216,8 @@ export default function Admin() {
       try { text = JSON.stringify(await res.json(), null, 2); } catch { text = await res.text(); }
       setState({ loading: false, response: text, status: res.status, elapsed, error: null });
 
-      // Inicia log polling quando iniciar busca
-      if (route.id === 'iniciar') {
+      // Inicia log polling quando iniciar busca ou diagnóstico
+      if (route.id === 'iniciar' || route.id === 'diagnostico') {
         try {
           const data = JSON.parse(text);
           if (data.PROTOCOLO) {
